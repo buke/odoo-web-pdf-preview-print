@@ -37,8 +37,6 @@ import simplejson
 import web.common as common
 import base64
 import time
-
-
 import zlib
 import cPickle
 import hashlib
@@ -68,11 +66,7 @@ class WebPdfReports(View):
 
     @openerpweb.httprequest
     def index(self, req, pdf_file_token):
-        args = FILE_TOKENS[str(req.session._uid)].get(pdf_file_token, None)
-
-        if not args:
-            return;
-
+        args = FILE_TOKENS[str(req.session._uid)].pop(pdf_file_token)
         action, token  = cPickle.loads(args)
 
         action = simplejson.loads(action)

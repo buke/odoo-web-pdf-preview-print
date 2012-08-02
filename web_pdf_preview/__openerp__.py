@@ -29,10 +29,11 @@
     'version': '1.0',
     'category': 'Web',
     'description': """Web PDF Report Preview & Print
-    For IE on windows, Adobe Reader is required.
+    For IE, Adobe Reader is required.
     For Chrome , nothing is requried.
-    For Firefox on windows, Adobe Reader is required.
-
+    For Firefox, Adobe Reader is required.
+    
+    Test passed on Windows.
     If your brower prevented pop-up window, you should allow it.
     """,
     'author': 'wangbuke@gmail.com',
