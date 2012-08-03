@@ -33,7 +33,9 @@ openerp.web_pdf_preview = function(openerp) {
                 domains: []
             }).then(function(res) {
                 //if(action.report_type == 'pdf') { 
-                if(true) { 
+                var os = navigator.platform || "Unknown OS";
+                linux = os.indexOf("Linux") > -1;
+                if(!linux) { 
                     action = _.clone(action);
                     action.context = res.context;
                     self.rpc('/web/report/pdf_token', 
