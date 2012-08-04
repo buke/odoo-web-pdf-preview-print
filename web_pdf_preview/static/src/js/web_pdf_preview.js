@@ -42,6 +42,7 @@ openerp.web_pdf_preview = function(openerp) {
                         {action: JSON.stringify(action), token: new Date().getTime()}, 
                         function(result) {
                             $.unblockUI();
+                            self.dialog_stop();
                             window.open('/web/report/pdf?pdf_file_token=' + result.pdf_file_token + '&session_id=' + self.session.session_id, 'report', '');
                         }
                     );
