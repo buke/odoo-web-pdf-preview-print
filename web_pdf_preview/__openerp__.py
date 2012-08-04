@@ -29,12 +29,26 @@
     'version': '1.0',
     'category': 'Web',
     'description': """Web PDF Report Preview & Print
-    For IE, Adobe Reader is required.
-    For Chrome , nothing is requried.
-    For Firefox, Adobe Reader is required.
-    
-    Test passed on Windows.
-    If your brower prevented pop-up window, you should allow it.
+
+Preview & Print PDF report in your browser.
+
+For IE, Adobe Reader is required.
+For Chrome , nothing is requried.
+For Firefox, Adobe Reader is required.
+
+Test passed on Windows.
+
+If your brower prevented pop-up window, you should allow it.
+
+------------------------------------------------
+直接在浏览器中预览打印PDF报表文件。
+
+For IE， 需要安装 Adobe Reader。
+For Firefox ,需要安装 Adobe Reader。
+For Chrome, 神马都不用安装。
+
+以上在windows 上测试通过。如果浏览器阻止了弹出窗口，请点允许弹出窗口。
+
     """,
     'author': 'wangbuke@gmail.com',
     'website': 'http://my.oschina.net/wangbuke',
