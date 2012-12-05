@@ -26,7 +26,7 @@ OpenERP 6.1
 
 浏览器客户端在Windows 下测试通过。
 
-:: 
-`下载页 <http://www.openerp.com/downloads>`_    ':'. 
+.. 
+   `下载页 <http://www.openerp.com/downloads>`_    ':'. 
 
 不要修改
