@@ -25,14 +25,3 @@ For Chrome, 神马都不用安装。
 OpenERP 6.1
 
 浏览器客户端在Windows 下测试通过。
-
-.. note:: 注意:
-
-
-   `下载页 <http://www.openerp.com/downloads>`_    ':'. 
-   
-   
-
-   
-
-不要修改
