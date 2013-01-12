@@ -18,6 +18,11 @@
 ############################################################################*/
 
 openerp.web_pdf_preview = function(instance) {
+
+    // TODO: FIX ERROR
+    // TypeError: this.get_action_manager(...) is undefined on Firefox
+    // TypeError: Cannot call method 'get_title' of undefined on Chrome / IE
+
     instance.web.ActionManager = instance.web.ActionManager.extend({
         ir_actions_report_xml: function(action, options) {
             var self = this;
@@ -26,23 +31,21 @@ openerp.web_pdf_preview = function(instance) {
                 contexts: [action.context],
                 domains: []
             }).then(function(res) {
+                action = _.clone(action);
+                action.context = res.context;
                 var os = navigator.platform || "Unknown OS";
                 linux = os.indexOf("Linux") > -1;
                 if(!linux) { 
-                    action = _.clone(action);
-                    action.context = res.context;
                     self.rpc("/web/report/pdf_token", {
                         action: JSON.stringify(action),
                         token: new Date().getTime()
                     }).done(function(result) {
-                        $.unblockUI();
+                        instance.web.unblockUI();
                         self.dialog_stop();
                         window.open('/web/report/pdf?pdf_file_token=' + result.pdf_file_token + '&session_id=' + self.session.session_id, 'report', '');
                     });
                 }
                 else {
-                    action = _.clone(action);
-                    action.context = res.context;
                     var c = instance.webclient.crashmanager;
                     return $.Deferred(function (d) {
                         self.session.get_file({
@@ -66,6 +69,8 @@ openerp.web_pdf_preview = function(instance) {
             });
         },
     });
+
+
 };
 
 

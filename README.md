@@ -20,9 +20,22 @@ For Chrome, 神马都不用安装。
 
 
 系统要求：
-------
+----------
 
 * 分支 master 对应 OpenERP 7.0 
 * 分支 6.1 对应 OpenERP 6.1 
 
 浏览器客户端在Windows 下测试通过。
+
+
+已知错误：
+----------
+
+* TypeError: this.get_action_manager(...) is undefined on Firefox
+* TypeError: Cannot call method 'get_title' of undefined on Chrome / IE
+
+解决方法：F5 刷新页面就可以了，求解。
+
+
+
+
