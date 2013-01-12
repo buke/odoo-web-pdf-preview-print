@@ -22,6 +22,7 @@ For Chrome, 神马都不用安装。
 系统要求：
 ------
 
-OpenERP 6.1
+* 分支 master 对应 OpenERP 7.0 
+* 分支 6.1 对应 OpenERP 6.1 
 
 浏览器客户端在Windows 下测试通过。
