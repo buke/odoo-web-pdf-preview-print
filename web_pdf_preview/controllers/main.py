@@ -18,23 +18,30 @@
 #
 ##############################################################################
 
-try:
-    # embedded
-    import openerp.addons.web.common.http as openerpweb
-    from openerp.addons.web.controllers.main import View
-except ImportError:
-    # standalone
-    import web.common.http as openerpweb
-    from web.controllers.main import View
+import openerp.addons.web.http as openerpweb
+from openerp.addons.web.controllers.main import View
 
+import urllib2
 import simplejson
-import web.common as common
 import base64
 import time
 import zlib
 import cPickle
 import hashlib
 FILE_TOKENS ={}
+
+def content_disposition(filename, req):
+    filename = filename.encode('utf8')
+    escaped = urllib2.quote(filename)
+    browser = req.httprequest.user_agent.browser
+    version = int((req.httprequest.user_agent.version or '0').split('.')[0])
+    if browser == 'msie' and version < 9:
+        return "inline; filename=%s" % escaped
+    elif browser == 'safari':
+        return "inline; filename=%s" % filename
+    else:
+        return "inline; filename*=UTF-8''%s" % escaped
+
 
 class WebPdfFileTokenView(View):
     _cp_path = "/web/report/pdf_token"
@@ -45,6 +52,7 @@ class WebPdfFileTokenView(View):
         token = hashlib.md5(args).hexdigest()
         FILE_TOKENS[str(req.session._uid)] = {token:args}
         return dict(pdf_file_token = token)
+
 
 class WebPdfReports(View):
     _cp_path = "/web/report/pdf"
@@ -62,13 +70,11 @@ class WebPdfReports(View):
     def index(self, req, pdf_file_token):
         args = FILE_TOKENS[str(req.session._uid)].pop(pdf_file_token)
         action, token  = cPickle.loads(args)
-
         action = simplejson.loads(action)
 
         report_srv = req.session.proxy("report")
-        context = req.session.eval_context(
-            common.nonliterals.CompoundContext(
-                req.context or {}, action[ "context"]))
+        context = dict(req.context)
+        context.update(action["context"])
 
         report_data = {}
         report_ids = context["active_ids"]
@@ -98,12 +104,22 @@ class WebPdfReports(View):
             report = zlib.decompress(report)
         report_mimetype = self.TYPES_MAPPING.get(
             report_struct['format'], 'octet-stream')
+        file_name = action.get('name', 'report')
+        if 'name' not in action:
+            reports = req.session.model('ir.actions.report.xml')
+            res_id = reports.search([('report_name', '=', action['report_name']),],
+                                    0, False, False, context)
+            if len(res_id) > 0:
+                file_name = reports.read(res_id[0], ['name'], context)['name']
+            else:
+                file_name = action['report_name']
+        file_name = '%s.%s' % (file_name, report_struct['format'])
+
         return req.make_response(report,
              headers=[
-                 ('Content-Disposition', 'inline; filename="%s.%s"' % (action['report_name'], report_struct['format'])),
+                 ('Content-Disposition', content_disposition(file_name, req)),
                  ('Content-Type', report_mimetype),
                  ('Content-Length', len(report))],
              cookies={'fileToken': int(token)})
-
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
