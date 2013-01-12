@@ -15,9 +15,6 @@
 #    You should have received a copy of the GNU Affero General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-#    For Commercial or OEM, you need to contact the author and/or licensor
-#    and ask for their permission.
-#
 ############################################################################*/
 
 openerp.web_pdf_preview = function(openerp) {
