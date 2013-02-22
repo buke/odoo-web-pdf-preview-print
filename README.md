@@ -12,7 +12,7 @@ Openerp Web PDF Report Preview & Print
 
 For IE， 需要安装 Adobe Reader。
 
-For Firefox ,需要安装 Adobe Reader。
+For Firefox 19 +, 神马都不用安装。
 
 For Chrome, 神马都不用安装。
 
@@ -27,14 +27,6 @@ For Chrome, 神马都不用安装。
 
 浏览器客户端在Windows 下测试通过。
 
-
-已知错误：
-----------
-
-* TypeError: this.get_action_manager(...) is undefined on Firefox
-* TypeError: Cannot call method 'get_title' of undefined on Chrome / IE
-
-解决方法：F5 刷新页面就可以了，求解。
 
 
 
