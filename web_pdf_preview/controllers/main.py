@@ -20,15 +20,16 @@
 
 import openerp.addons.web.http as openerpweb
 from openerp.addons.web.controllers.main import View
-
+import urllib
 import urllib2
-import simplejson
 import base64
 import time
 import zlib
-import cPickle
-import hashlib
-FILE_TOKENS ={}
+
+try:
+    import json
+except:
+    import simplejson as json
 
 def content_disposition(filename, req):
     filename = filename.encode('utf8')
@@ -41,17 +42,6 @@ def content_disposition(filename, req):
         return "inline; filename=%s" % filename
     else:
         return "inline; filename*=UTF-8''%s" % escaped
-
-
-class WebPdfFileTokenView(View):
-    _cp_path = "/web/report/pdf_token"
-
-    @openerpweb.jsonrequest
-    def index(self, req, action, token):
-        args = cPickle.dumps((action, token))
-        token = hashlib.md5(args).hexdigest()
-        FILE_TOKENS[str(req.session._uid)] = {token:args}
-        return dict(pdf_file_token = token)
 
 
 class WebPdfReports(View):
@@ -67,10 +57,8 @@ class WebPdfReports(View):
     }
 
     @openerpweb.httprequest
-    def index(self, req, pdf_file_token):
-        args = FILE_TOKENS[str(req.session._uid)].pop(pdf_file_token)
-        action, token  = cPickle.loads(args)
-        action = simplejson.loads(action)
+    def index(self, req, action, token):
+        action = json.loads(urllib.unquote(action))
 
         report_srv = req.session.proxy("report")
         context = dict(req.context)
