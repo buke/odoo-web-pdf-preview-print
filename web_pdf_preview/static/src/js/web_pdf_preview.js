@@ -28,34 +28,11 @@ openerp.web_pdf_preview = function(instance) {
             }).then(function(res) {
                 action = _.clone(action);
                 action.context = res.context;
-                var os = navigator.platform || "Unknown OS";
-                linux = os.indexOf("Linux") > -1;
-                if(!linux) { 
-                    instance.web.unblockUI();
-                    self.dialog_stop();
-                    window.open('/web/report/pdf?action=' + encodeURIComponent(JSON.stringify(action)) + '&token=' + new Date().getTime() + '&session_id=' + self.session.session_id, 'report', '');
-                }
-                else {
-                    var c = instance.webclient.crashmanager;
-                    return $.Deferred(function (d) {
-                        self.session.get_file({
-                            url: '/web/report',
-                            data: {action: JSON.stringify(action)},
-                            complete: instance.web.unblockUI,
-                            success: function(){
-                                if (!self.dialog) {
-                                    options.on_close();
-                                }
-                                self.dialog_stop();
-                                d.resolve();
-                            },
-                            error: function () {
-                                c.rpc_error.apply(c, arguments);
-                                d.reject();
-                            }
-                        })
-                    });
-                }
+                //var os = navigator.platform || "Unknown OS";
+                //linux = os.indexOf("Linux") > -1;
+                instance.web.unblockUI();
+                self.dialog_stop();
+                window.open('/web/report/pdf?action=' + encodeURIComponent(JSON.stringify(action)) + '&token=' + new Date().getTime() + '&session_id=' + self.session.session_id, 'report', '');
             });
         },
     });

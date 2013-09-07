@@ -18,6 +18,18 @@
 #
 ##############################################################################
 
-from . import main
+import openerp.addons.web.http as openerpweb
+from openerp.addons.web.controllers.main import Reports
+import urllib
+
+class WebPdfReports(Reports):
+    _cp_path = "/web/report/pdf"
+
+    @openerpweb.httprequest
+    def index(self, req, action, token):
+        action = urllib.unquote(action)
+        result = super(WebPdfReports, self).index(req, action, token)
+        result.headers['Content-Disposition'] = result.headers['Content-Disposition'].replace('attachment', 'inline')
+        return result
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

@@ -34,9 +34,17 @@ Test passed on Windows.
 
 If your brower prevented pop-up window, you should allow it.
 
+功能：PDF 报表预览
+
+如果您觉得好用，请进入下面的网址，付费支持作者 ~
+
+http://me.alipay.com/wangbuke
+
+谢谢！
+
     """,
     'author': 'wangbuke@gmail.com',
-    'website': 'http://my.oschina.net/wangbuke',
+    'website': 'http://buke.github.io',
     'license': 'AGPL-3',
     'depends': ['web'],
     'data': [],
