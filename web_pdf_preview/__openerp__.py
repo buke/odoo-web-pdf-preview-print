@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 ##############################################################################
 #    Web PDF Report Preview & Print
-#    Copyright 2012 wangbuke <wangbuke@gmail.com>
+#    Copyright 2014 wangbuke <wangbuke@gmail.com>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -47,7 +47,9 @@ http://me.alipay.com/wangbuke
     'website': 'http://buke.github.io',
     'license': 'AGPL-3',
     'depends': ['web'],
-    'data': [],
+    'data': [
+        'views/web_pdf_preview.xml',
+    ],
     'auto_install': False,
     'web_preload': True,
     'js': ['static/src/js/web_pdf_preview.js'],
