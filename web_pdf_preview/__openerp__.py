@@ -52,7 +52,6 @@ http://me.alipay.com/wangbuke
     ],
     'auto_install': False,
     'web_preload': True,
-    'js': ['static/src/js/web_pdf_preview.js'],
 }
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
