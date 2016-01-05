@@ -1,4 +1,4 @@
-Openerp Web PDF Report Preview & Print
+Odoo(formerly OpenERP) Web PDF Report Preview & Print
 ==============
 
 Openerp Web PDF Report Preview & Print
@@ -22,6 +22,7 @@ For Chrome, 神马都不用安装。
 系统要求：
 ----------
 
+* 分支 9.0 对应 OpenERP 9.0 
 * 分支 8.0 对应 OpenERP 8.0 
 * 分支 7.0 对应 OpenERP 7.0 
 * 分支 6.1 对应 OpenERP 6.1 
