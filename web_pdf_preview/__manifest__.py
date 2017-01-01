@@ -43,7 +43,6 @@ If your brower prevented pop-up window, you should allow it.
     'data': [
         'views/web_pdf_preview.xml',
     ],
-
 }
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
