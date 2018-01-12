@@ -1,6 +1,7 @@
 /*############################################################################
 #    Web PDF Report Preview & Print
 #    Copyright 2014 wangbuke <wangbuke@gmail.com>
+#    Modified by Yuan Xulei <hi@yxl.name> on Jan 1, 2017
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as
@@ -18,140 +19,46 @@
 ############################################################################*/
 odoo.define('report.web_pdf_preview', function (require) {
 
-var ActionManager = require('web.ActionManager');
-var core = require('web.core');
-var crash_manager = require('web.crash_manager');
-var framework = require('web.framework');
+function is_mobile() {
+    return /Android|iPhone|iPad|iPod|Mobi/i.test(navigator.userAgent);
+}
+
+/*
+ * Hook `session.get_file` in /addons/report/static/src/js/qwebactionmanager.js to prevent downloading.
+ */
 var session = require('web.session');
+var get_file = session.get_file;
 
-var _t = core._t;
-var wkhtmltopdf_state;
+session.get_file = function(options) {
+	alert("文本")
+    if (!options || options.url !== '/report/download') {
+        get_file.apply(this, arguments);
+        return;
+    }
 
-var trigger_download = function(session, response, c, action, options) {
     var params = {
-        data: JSON.stringify(response),
+        data: options.data.data,
         token: new Date().getTime()
     };
     var url = session.url('/report/preview', params);
-    window.open(url, 'report', '');
-    framework.unblockUI();
-};
 
-ActionManager.include({
-    ir_actions_report_xml: function(action, options) {
-        var self = this;
-        framework.blockUI();
-        action = _.clone(action);
-        _t =  core._t;
-
-        // QWeb reports
-        if ('report_type' in action && (action.report_type == 'qweb-html' || action.report_type == 'qweb-pdf' || action.report_type == 'controller')) {
-            var report_url = '';
-            switch (action.report_type) {
-                case 'qweb-html':
-                    report_url = '/report/html/' + action.report_name;
-                    break;
-                case 'qweb-pdf':
-                    report_url = '/report/pdf/' + action.report_name;
-                    break;
-                case 'controller':
-                    report_url = action.report_file;
-                    break;
-                default:
-                    report_url = '/report/html/' + action.report_name;
-                    break;
-            }
-
-            // generic report: no query string
-            // particular: query string of action.data.form and context
-            if (!('data' in action) || !(action.data)) {
-                if ('active_ids' in action.context) {
-                    report_url += "/" + action.context.active_ids.join(',') + "?enable_editor=1";
-                }
-            } else {
-                report_url += "?enable_editor=1";
-                report_url += "&options=" + encodeURIComponent(JSON.stringify(action.data));
-                report_url += "&context=" + encodeURIComponent(JSON.stringify(action.context));
-            }
-
-            var response = new Array();
-            response[0] = report_url;
-            response[1] = action.report_type;
-            var c = crash_manager;
-
-            if (action.report_type == 'qweb-html') {
-                window.open(report_url, '_blank', 'scrollbars=1,height=900,width=1280');
-                framework.unblockUI();
-            } else if (action.report_type === 'qweb-pdf') {
-                // Trigger the download of the pdf/controller report
-                (wkhtmltopdf_state = wkhtmltopdf_state || session.rpc('/report/check_wkhtmltopdf')).then(function (presence) {
-                    // Fallback on html if wkhtmltopdf is not installed or if OpenERP is started with one worker
-                    if (presence === 'install') {
-                        self.do_notify(_t('Report'), _t('Unable to find Wkhtmltopdf on this \
-system. The report will be shown in html.<br><br><a href="http://wkhtmltopdf.org/" target="_blank">\
-wkhtmltopdf.org</a>'), true);
-                        report_url = report_url.substring(12);
-                        window.open('/report/html/' + report_url, '_blank', 'height=768,width=1024');
-                        framework.unblockUI();
-                        return;
-                    } else if (presence === 'workers') {
-                        self.do_notify(_t('Report'), _t('You need to start OpenERP with at least two \
-workers to print a pdf version of the reports.'), true);
-                        report_url = report_url.substring(12);
-                        window.open('/report/html/' + report_url, '_blank', 'height=768,width=1024');
-                        framework.unblockUI();
-                        return;
-                    } else if (presence === 'upgrade') {
-                        self.do_notify(_t('Report'), _t('You should upgrade your version of\
-Wkhtmltopdf to at least 0.12.0 in order to get a correct display of headers and footers as well as\
-support for table-breaking between pages.<br><br><a href="http://wkhtmltopdf.org/" \
-target="_blank">wkhtmltopdf.org</a>'), true);
-                    }
-                    return trigger_download(self.session, response, c, action, options);
-                });
-            } else if (action.report_type === 'controller') {
-                return trigger_download(self.session, response, c, action, options);
-            }                     
-        } else {
-            var eval_contexts = ([session.user_context] || []).concat([action.context]);
-            action.context = pyeval.eval('contexts',eval_contexts);
-
-            // iOS devices doesn't allow iframe use the way we do it,
-            // opening a new window seems the best way to workaround
-            if (navigator.userAgent.match(/(iPod|iPhone|iPad)/)) {
-                var params = {
-                    action: JSON.stringify(action),
-                    token: new Date().getTime()
-                };
-                var url = self.session.url('/web/report', params);
-                framework.unblockUI();
-                $('<a href="'+url+'" target="_blank"></a>')[0].click();
-                return;
-            }
-            var c = crash_manager;
-            return $.Deferred(function (d) {
-                self.session.get_file({
-                    url: '/web/report',
-                    data: {action: JSON.stringify(action)},
-                    complete: framework.unblockUI,
-                    success: function(){
-                        if (!self.dialog) {
-                            options.on_close();
-                        }
-                        self.dialog_stop();
-                        d.resolve();
-                    },
-                    error: function () {
-                        c.rpc_error.apply(c, arguments);
-                        d.reject();
-                    }
-                });
-            });
-
-            //return self._super(action, options);
+    /*
+     * Open the PDF report in current window on mobile (since iPhone prevents
+     * openning in new window), while open in new window on desktop.
+     * 手机上在当前页面打开 PDF 文档(因为iPhone不允许在新窗口打开)， 桌面浏览器在新窗口打开
+     */
+    if (is_mobile()) {
+        require('web.framework').unblockUI();
+        location.href = url;
+    } else {
+        window.open(url);
+        if (typeof options.success === 'function') {
+            options.success();
+        }
+        if (typeof options.complete === 'function') {
+            options.complete();
         }
     }
-});
+};
 
 });
-
