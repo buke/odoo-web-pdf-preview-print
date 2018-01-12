@@ -30,7 +30,6 @@ var session = require('web.session');
 var get_file = session.get_file;
 
 session.get_file = function(options) {
-	alert("文本")
     if (!options || options.url !== '/report/download') {
         get_file.apply(this, arguments);
         return;
